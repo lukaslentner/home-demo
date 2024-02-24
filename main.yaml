@@ -61,7 +61,7 @@ metadata:
 spec:
   ingressClassName: public
   rules:
-    - host: demo.app.home.lentner.de
+    - host: demo2.app.home.lentner.de
       http:
         paths:
           - path: /
