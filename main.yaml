@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: nginx
+  name: data
 spec:
   accessModes:
     - ReadWriteOnce
@@ -13,7 +13,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx
+  name: app
   labels:
     app: nginx
 spec:
@@ -27,28 +27,29 @@ spec:
         app: nginx
     spec:
       volumes:
-        - name: nginx
+        - name: data
           persistentVolumeClaim:
-            claimName: nginx
+            claimName: data
       containers:
-        - name: nginx
+        - name: main
           image: nginx
           ports:
             - containerPort: 80
               protocol: TCP
+              name: http
           volumeMounts:
-            - name: nginx
+            - name: data
               mountPath: /usr/share/nginx/html
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: nginx
+  name: app
 spec:
   ports:
     - protocol: TCP
       port: 80
-      targetPort: 80
+      targetPort: http
   selector:
     app: nginx
 ---
@@ -68,6 +69,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: nginx
+                name: app
                 port:
                   number: 80
